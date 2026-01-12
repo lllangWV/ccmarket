@@ -1,32 +1,36 @@
 # Claude Code Extensions
 
-This repository contains a curated collection of skills, agents, and slash commands for Claude Code.
+This repository is a Claude Code plugin containing a curated collection of skills, agents, and slash commands.
 
 ## Project Structure
 
 ```
-.claude/
-├── agents/       # 6 custom subagents for specialized tasks
-├── commands/     # 29 slash commands for common workflows
-├── scripts/      # Utility scripts (hack/, ralph/)
-├── skills/       # 25 skills for document handling, design, development
-└── settings.json # Project configuration
+cc-ext/
+├── .claude-plugin/
+│   └── plugin.json    # Plugin metadata and manifest
+├── agents/            # 6 custom subagents for specialized tasks
+├── commands/          # 29 slash commands for common workflows
+├── skills/            # 25 skills for document handling, design, development
+├── .claude/
+│   ├── scripts/       # Utility scripts (hack/, ralph/)
+│   └── settings.json  # Project configuration
+└── README.md
 ```
 
 ## Key Patterns
 
 ### Skills
-- Each skill lives in `.claude/skills/<name>/SKILL.md`
+- Each skill lives in `skills/<name>/SKILL.md`
 - Skills auto-activate based on their `description` field
 - Supporting files go in the skill directory (scripts/, references/, etc.)
 
 ### Slash Commands
-- Commands are `.md` files in `.claude/commands/`
+- Commands are `.md` files in `commands/`
 - Use `$ARGUMENTS` or `$1`, `$2` for parameters
 - Commands support `allowed-tools` to restrict tool access
 
 ### Agents
-- Agents are `.md` files in `.claude/agents/`
+- Agents are `.md` files in `agents/`
 - Define `tools`, `model`, and system prompt in frontmatter
 - Used via Task tool for isolated execution
 
