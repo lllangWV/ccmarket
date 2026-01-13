@@ -1,11 +1,11 @@
 {
   "name": "cc-ext",
   "version": "1.0.0",
-  "description": "A curated collection of skills, agents, and slash commands for Claude Code - including document handling (docx, xlsx, pptx, pdf), design tools (frontend, canvas, algorithmic art), development utilities (testing, MCP building, coding agents), and workflow automation (Linear integration, git workflows, planning).",
+  "description": "Slash commands and agents for workflow automation - Linear integration, git workflows, and planning",
   "author": {
     "name": "lllang"
   },
-  "repository": "https://github.com/lllang/ccmarket",
+  "repository": "https://github.com/lllangWV/ccmarket",
   "license": "MIT",
   "agents": [
     "./agents/codebase-analyzer.md",
@@ -15,7 +15,5 @@
     "./agents/thoughts-locator.md",
     "./agents/web-search-researcher.md"
   ],
-  "commands": "./commands/",
-  "skills": "./skills/"
-  
+  "commands": "./commands/"
 }

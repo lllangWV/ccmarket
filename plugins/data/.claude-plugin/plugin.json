@@ -1,0 +1,11 @@
+{
+  "name": "data",
+  "version": "1.0.0",
+  "description": "Data engineering tools - production data pipelines and Delta Lake operations",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

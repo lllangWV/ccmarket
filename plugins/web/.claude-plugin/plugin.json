@@ -1,0 +1,11 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "Web development tools - build React/Tailwind artifacts and test web applications with Playwright",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

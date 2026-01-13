@@ -1,0 +1,11 @@
+{
+  "name": "mineru",
+  "version": "1.0.0",
+  "description": "Parse PDFs into Markdown and structured outputs using MinerU - extract tables, images, and equations",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

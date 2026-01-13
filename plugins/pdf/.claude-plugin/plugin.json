@@ -1,0 +1,11 @@
+{
+  "name": "pdf",
+  "version": "1.0.0",
+  "description": "PDF processing toolkit - extract text/tables, create PDFs, merge/split documents, and fill forms",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

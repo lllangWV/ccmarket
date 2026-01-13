@@ -1,0 +1,11 @@
+{
+  "name": "dev-tools",
+  "version": "1.0.0",
+  "description": "Developer tools - skill creation, Python testing, MCP server building, and Pixi package management",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

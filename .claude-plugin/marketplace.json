@@ -9,10 +9,87 @@
   "plugins": [
     {
       "name": "cc-ext",
-      "description": "A curated collection of skills, agents, and slash commands - including document handling (docx, xlsx, pptx, pdf), design tools (frontend, canvas, algorithmic art), development utilities (testing, MCP building, coding agents), and workflow automation (Linear integration, git workflows, planning)",
+      "description": "Slash commands and agents for workflow automation - Linear integration, git workflows, and planning",
       "version": "1.0.0",
       "source": "./plugins/cc-ext",
       "category": "productivity"
+    },
+    {
+      "name": "office",
+      "description": "Microsoft Office document handling - create, edit, and analyze Word (docx), Excel (xlsx), and PowerPoint (pptx) files",
+      "version": "1.0.0",
+      "source": "./plugins/office",
+      "category": "productivity"
+    },
+    {
+      "name": "pdf",
+      "description": "PDF processing toolkit - extract text/tables, create PDFs, merge/split documents, and fill forms",
+      "version": "1.0.0",
+      "source": "./plugins/pdf",
+      "category": "productivity"
+    },
+    {
+      "name": "mineru",
+      "description": "Parse PDFs into Markdown and structured outputs using MinerU - extract tables, images, and equations",
+      "version": "1.0.0",
+      "source": "./plugins/mineru",
+      "category": "productivity"
+    },
+    {
+      "name": "design",
+      "description": "Visual design toolkit - canvas art, algorithmic art, frontend design, TUI design, themes, brand guidelines, and GIF creation",
+      "version": "1.0.0",
+      "source": "./plugins/design",
+      "category": "design"
+    },
+    {
+      "name": "web",
+      "description": "Web development tools - build React/Tailwind artifacts and test web applications with Playwright",
+      "version": "1.0.0",
+      "source": "./plugins/web",
+      "category": "development"
+    },
+    {
+      "name": "dev-tools",
+      "description": "Developer tools - skill creation, Python testing, MCP server building, and Pixi package management",
+      "version": "1.0.0",
+      "source": "./plugins/dev-tools",
+      "category": "development"
+    },
+    {
+      "name": "data",
+      "description": "Data engineering tools - production data pipelines and Delta Lake operations",
+      "version": "1.0.0",
+      "source": "./plugins/data",
+      "category": "data"
+    },
+    {
+      "name": "cadquery",
+      "description": "Parametric 3D CAD modeling with CadQuery - create models and export to STL/STEP/DXF",
+      "version": "1.0.0",
+      "source": "./plugins/cadquery",
+      "category": "engineering"
+    },
+    {
+      "name": "comms",
+      "description": "Communication and documentation - co-authoring workflows and internal communications templates",
+      "version": "1.0.0",
+      "source": "./plugins/comms",
+      "category": "productivity"
+    },
+    {
+      "name": "coding-agent",
+      "description": "Guide for building coding agents from scratch - tool-calling LLM loops and inference architecture",
+      "version": "1.0.0",
+      "source": "./plugins/coding-agent",
+      "category": "development"
+    },
+    {
+      "name": "atomic-agents",
+      "description": "Design and implement projects with Atomic Agents framework - strongly-typed agents and orchestration",
+      "version": "1.0.0",
+      "source": "./plugins/atomic-agents",
+      "category": "development"
     },
     {
       "name": "ralph",

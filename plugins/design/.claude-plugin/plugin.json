@@ -1,0 +1,11 @@
+{
+  "name": "design",
+  "version": "1.0.0",
+  "description": "Visual design toolkit - canvas art, algorithmic art, frontend design, TUI design, themes, brand guidelines, and GIF creation",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

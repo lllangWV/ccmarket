@@ -1,0 +1,11 @@
+{
+  "name": "cadquery",
+  "version": "1.0.0",
+  "description": "Parametric 3D CAD modeling with CadQuery - create models and export to STL/STEP/DXF",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}

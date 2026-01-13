@@ -1,0 +1,11 @@
+{
+  "name": "atomic-agents",
+  "version": "1.0.0",
+  "description": "Design and implement projects with Atomic Agents framework - strongly-typed agents and orchestration",
+  "author": {
+    "name": "lllang"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket",
+  "license": "MIT",
+  "skills": "./skills/"
+}
