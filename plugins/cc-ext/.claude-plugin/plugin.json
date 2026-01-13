@@ -2,7 +2,9 @@
   "name": "cc-ext",
   "version": "1.0.0",
   "description": "A curated collection of skills, agents, and slash commands for Claude Code - including document handling (docx, xlsx, pptx, pdf), design tools (frontend, canvas, algorithmic art), development utilities (testing, MCP building, coding agents), and workflow automation (Linear integration, git workflows, planning).",
-  "author": "lllang",
+  "author": {
+    "name": "lllang"
+  },
   "commands": [
     { "name": "commit", "description": "Create git commits with user approval and no Claude attribution" },
     { "name": "ci_commit", "description": "Create git commits for session changes with clear, atomic messages" },

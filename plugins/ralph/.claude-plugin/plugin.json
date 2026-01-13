@@ -2,7 +2,9 @@
   "name": "ralph",
   "version": "1.0.0",
   "description": "Ralph automation scripts for continuous implementation loops - planning, implementation, and general prompts for autonomous coding workflows",
-  "author": "lllang",
+  "author": {
+    "name": "lllang"
+  },
   "commands": [
     { "name": "create_ralph_impl_loop", "description": "Generate implementation loop scripts for continuous autonomous coding (Linear-free)" }
   ]
