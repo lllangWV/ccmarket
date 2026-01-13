@@ -7,7 +7,7 @@
   },
   "repository": "https://github.com/lllang/ccmarket",
   "license": "MIT",
-  "agents": "./agents/",
+  "agents": ["./agents/codebase-analyzer.md"],
   "commands": "./commands/",
   "skills": "./skills/"
   
