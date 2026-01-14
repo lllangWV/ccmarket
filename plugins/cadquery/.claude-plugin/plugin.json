@@ -6,5 +6,6 @@
     "name": "lllangWV"
   },
   "repository": "https://github.com/lllangWV/ccmarket/tree/main/plugins/cadquery",
-  "license": "MIT"
+  "license": "MIT",
+  "skills": "./skills/"
 }
