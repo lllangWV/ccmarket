@@ -25,13 +25,13 @@ Read and copy each prompt file to the output directory:
 
 | Source | Destination |
 |--------|-------------|
-| `plugins/ralph/commands/run_ralph_rs.md` | `${2:-scripts}/RS_LOOP_PROMPT.md` |
-| `plugins/ralph/commands/run_ralph_rp.md` | `${2:-scripts}/RP_LOOP_PROMPT.md` |
-| `plugins/ralph/commands/run_ralph_ri.md` | `${2:-scripts}/RI_LOOP_PROMPT.md` |
+| `${CLAUDE_PLUGIN_ROOT}/commands/run_ralph_rs.md` | `${2:-scripts}/RS_LOOP_PROMPT.md` |
+| `${CLAUDE_PLUGIN_ROOT}/commands/run_ralph_rp.md` | `${2:-scripts}/RP_LOOP_PROMPT.md` |
+| `${CLAUDE_PLUGIN_ROOT}/commands/run_ralph_ri.md` | `${2:-scripts}/RI_LOOP_PROMPT.md` |
 
 ### Step 3: Copy Shell Script
 
-Read `plugins/ralph/scripts/run_rsrpri_loop.sh` and write it to `${2:-scripts}/run_rsrpri_loop.sh`.
+Read `${CLAUDE_PLUGIN_ROOT}/scripts/run_rsrpri_loop.sh` and write it to `${2:-scripts}/run_rsrpri_loop.sh`.
 
 If `$1` (model) was provided, replace `opus` in the MODEL default with the provided value.
 

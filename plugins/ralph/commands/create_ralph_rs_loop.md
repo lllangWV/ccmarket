@@ -21,13 +21,13 @@ mkdir -p "${2:-scripts}"
 
 ### Step 2: Copy Prompt File
 
-Read `plugins/ralph/commands/run_ralph_rs.md` and write it to `${2:-scripts}/RS_LOOP_PROMPT.md`.
+Read `${CLAUDE_PLUGIN_ROOT}/commands/run_ralph_rs.md` and write it to `${2:-scripts}/RS_LOOP_PROMPT.md`.
 
 This makes the prompt local to the project so it can be customized.
 
 ### Step 3: Copy Shell Script
 
-Read `plugins/ralph/scripts/run_rs_loop.sh` and write it to `${2:-scripts}/run_rs_loop.sh`.
+Read `${CLAUDE_PLUGIN_ROOT}/scripts/run_rs_loop.sh` and write it to `${2:-scripts}/run_rs_loop.sh`.
 
 If `$1` (model) was provided, replace `opus` in the MODEL default with the provided value.
 
