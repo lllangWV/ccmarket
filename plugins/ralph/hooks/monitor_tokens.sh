@@ -99,6 +99,9 @@ if [ "$BLOCK_AT_THRESHOLD" = "true" ] && [ "$CONTEXT_PERCENT" -gt "$MAX_CONTEXT_
     CONTEXT_MSG="WARNING: CONTEXT LIMIT EXCEEDED (${CONTEXT_PERCENT}% > ${MAX_CONTEXT_PERCENT}%) - ${CONTEXT_MSG}"
 fi
 
+# Output message to stderr for user visibility (shown in verbose mode)
+echo "$CONTEXT_MSG" >&2
+
 # Output JSON with additionalContext to inject into model context
 debug "Outputting JSON with additionalContext: $CONTEXT_MSG"
 jq -n --arg ctx "$CONTEXT_MSG" '{
