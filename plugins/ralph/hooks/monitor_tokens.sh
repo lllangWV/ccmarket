@@ -2,8 +2,7 @@
 # PostToolUse hook to display context usage every N tool calls
 # Configuration is loaded from monitor_tokens.conf.json
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG_FILE="${SCRIPT_DIR}/monitor_tokens.conf.json"
+CONFIG_FILE="${CLAUDE_PLUGIN_ROOT}/hooks/monitor_tokens.conf.json"
 STATE_DIR="${HOME}/.claude/context-usage-monitor-state"
 DEBUG_LOG="${STATE_DIR}/debug.log"
 
