@@ -1,7 +1,7 @@
 {
   "name": "dev-tools",
   "version": "1.0.0",
-  "description": "Developer tools - skill creation, Python testing, MCP server building, and Pixi package management",
+  "description": "Developer tools - skill creation, Python testing, and MCP server building",
   "author": {
     "name": "lllangWV"
   },

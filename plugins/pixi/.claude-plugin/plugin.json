@@ -1,0 +1,11 @@
+{
+  "name": "pixi",
+  "version": "1.0.0",
+  "description": "Pixi package and environment management - conda/pypi dependencies, tasks, environments, and workspace configuration",
+  "author": {
+    "name": "lllangWV"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket/tree/main/plugins/pixi",
+  "license": "MIT",
+  "skills": "./skills/"
+}

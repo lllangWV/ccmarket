@@ -51,9 +51,16 @@
     },
     {
       "name": "dev-tools",
-      "description": "Developer tools - skill creation, Python testing, MCP server building, and Pixi package management",
+      "description": "Developer tools - skill creation, Python testing, and MCP server building",
       "version": "1.0.0",
       "source": "./plugins/dev-tools",
+      "category": "development"
+    },
+    {
+      "name": "pixi",
+      "description": "Pixi package and environment management - conda/pypi dependencies, tasks, environments, and workspace configuration",
+      "version": "1.0.0",
+      "source": "./plugins/pixi",
       "category": "development"
     },
     {
