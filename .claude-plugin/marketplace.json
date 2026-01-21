@@ -118,6 +118,34 @@
       "version": "1.0.0",
       "source": "./plugins/rattler",
       "category": "development"
+    },
+    {
+      "name": "codebase-docs",
+      "description": "Standards and best practices for writing AGENTS.md and specification documents",
+      "version": "0.1.0",
+      "source": "./plugins/codebase-docs",
+      "category": "documentation"
+    },
+    {
+      "name": "beautiful-prose",
+      "description": "A hard-edged writing style contract for timeless, forceful English prose without modern AI tics",
+      "version": "0.1.0",
+      "source": "./plugins/beautiful-prose",
+      "category": "writing"
+    },
+    {
+      "name": "brainstorming",
+      "description": "Turn ideas into fully formed designs through collaborative dialogue before implementation",
+      "version": "0.1.0",
+      "source": "./plugins/brainstorming",
+      "category": "productivity"
+    },
+    {
+      "name": "skill-authoring",
+      "description": "TDD-based approach to creating and testing Claude Code skills",
+      "version": "0.1.0",
+      "source": "./plugins/skill-authoring",
+      "category": "development"
     }
   ]
 }
