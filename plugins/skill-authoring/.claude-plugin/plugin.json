@@ -1,0 +1,5 @@
+{
+  "name": "skill-authoring",
+  "version": "0.1.0",
+  "description": "TDD-based approach to creating and testing Claude Code skills"
+}
