@@ -48,3 +48,4 @@ pixi.lock
 *.pixi.lock
 
 .claude/
+ext_pkgs/
