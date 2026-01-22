@@ -1,0 +1,18 @@
+[workspace]
+name = "data-plugins"
+version = "0.1.0"
+description = "Testing environment for data-related Claude Code skills"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+[tasks]
+test-deltalake = "python -c \"from deltalake import DeltaTable, write_deltalake; print('deltalake imported successfully')\""
+
+[dependencies]
+python = ">=3.10"
+pandas = ">=2.0"
+polars = ">=0.20"
+pyarrow = ">=14.0"
+
+[pypi-dependencies]
+deltalake = ">=0.18.0"
