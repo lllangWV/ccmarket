@@ -1,0 +1,50 @@
+
+
+
+[feature.pytest.dependencies]
+pytest = "*"
+pytest-benchmark = "*"
+pytest-rerunfailures = "*"
+pytest-timeout = "*"
+pytest-xdist = "*"
+
+[feature.pytest.tasks]
+
+test = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_pytest.sh {{ test_pattern }} {{ verbose }}", args = [{ arg = "test_pattern", default = "" }, { arg = "verbose", default = "" }], description = "Run tests (optional: test_pattern, --verbose|-v)" }
+
+[feature.lint.dependencies]
+
+basedpyright = "*"
+ruff = "*"
+
+[feature.lint.tasks]
+actionlint = { cmd = "actionlint", env = { SHELLCHECK_OPTS = "-e SC2086" } }
+dprint-check = { cmd = "dprint check --allow-no-files --config $PIXI_PROJECT_ROOT/.config/.dprint.jsonc", description = "Check formatting with dprint" }
+dprint-fmt = { cmd = "dprint fmt --allow-no-files --incremental=false --config $PIXI_PROJECT_ROOT/.config/.dprint.jsonc", description = "Format with dprint" }
+toml-format = { cmd = "taplo fmt", env = { RUST_LOG = "warn" } }
+toml-lint = "taplo lint --verbose **/pixi.toml --config $PIXI_PROJECT_ROOT/.config/.taplo.toml"
+
+typos = "typos --force-exclude --config $PIXI_PROJECT_ROOT/.config/.typos.toml"
+
+typecheck = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_typecheck.sh {{ file_path }} {{ verbose }}", args = [{ arg = "file_path", default = "" }, { arg = "verbose", default = "" }], description = "Run type checking (optional: file_path, --verbose|-v)" }
+
+ruff-lint = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_ruff_lint.sh {{ file_path }} {{ verbose }} {{ scope }}", args = [{ arg = "file_path", default = "" }, { arg = "verbose", default = "" }, { arg = "scope", default = "" }], description = "Run ruff linting (optional: file_path, --verbose|-v, --src|--tests)" }
+ruff-format = { cmd = "bash $PIXI_PROJECT_ROOT/.config/run_silent_ruff_format.sh {{ file_path }} {{ verbose }} {{ scope }}", args = [{ arg = "file_path", default = "" }, { arg = "verbose", default = "" }, { arg = "scope", default = "" }], description = "Run ruff formatting (optional: file_path, --verbose|-v, --src|--tests)" }
+
+[feature.lint.tasks.lint-src]
+depends-on = [
+  { task = "ruff-lint", args = ["--src"] },
+  { task = "ruff-format", args = ["--src"] }
+]
+description = "Run linting and formatting on src/**/*.py code"
+
+[feature.lint.tasks.lint-tests]
+depends-on = [
+  { task = "ruff-lint", args = ["--tests"] },
+  { task = "ruff-format", args = ["--tests"] }
+]
+description = "Run linting and formatting on tests/**/*.py code"
+
+[feature.lint.tasks.lint]
+depends-on = ["lint-src", "lint-tests"]
+description = "Run all linters and formatters on all code"
