@@ -42,3 +42,4 @@ thoughts/
 .pixi/*
 !.pixi/config.toml
 pixi.lock
+*tmp.md
