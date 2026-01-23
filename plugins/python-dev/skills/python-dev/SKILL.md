@@ -79,9 +79,8 @@ digraph workflow {
 ### Phase 1: Type Checking
 
 1. Run `pixi run -q -e dev typecheck`
-2. If type errors exist, read @references/typechecking.md for patterns to fix them
-3. For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
-4. Re-run until clean
+2. For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
+3. Re-run until clean
 
 ### Phase 2: Tests
 
@@ -113,15 +112,6 @@ For each error within a phase:
 3. Fix the issue
 4. Re-run the task to verify
 
-## Common Type Error Fixes
-
-| Error | Fix |
-|-------|-----|
-| `list[X] not assignable to list[X\|Y]` | Use `Sequence[X\|Y]` (covariant) instead of `list` |
-| `"T \| None" has no attribute` | Add null guard: `if x is None: raise/return` |
-| Missing type annotation | Add annotation; use `TypeVar` for generics |
-
-For more patterns (Protocols, TypedDict, overloads, generics), see @references/typechecking.md
 
 ## The Iron Rule: Fix the Code, Not the Tools
 
