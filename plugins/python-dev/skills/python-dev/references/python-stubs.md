@@ -1,22 +1,10 @@
----
-name: python-stubs
-description: Use when creating type stubs (.pyi files) for libraries without type hints, contributing to typeshed, or fixing "module has no attribute" type errors for untyped packages
----
-
 # Creating Python Type Stubs
 
 ## Workflow
 
-```dot
-digraph workflow {
-    "Check typeshed/PyPI" -> "Exists?" -> "Install types-pkg" [label="yes"];
-    "Exists?" -> "stubgen -p pkg -o stubs/" [label="no"];
-    "stubgen -p pkg -o stubs/" -> "stubtest pkg";
-    "stubtest pkg" -> "Fix errors" -> "stubtest pkg";
-}
-```
-
-**First:** Check for existing stubs at pypi.org (`types-somelib`) or typeshed.
+1. Check for existing stubs at pypi.org (`types-somelib`) or typeshed
+2. If none exist, generate with `stubgen`
+3. Verify with `stubtest`
 
 ## Tools
 
@@ -97,10 +85,6 @@ python -m mypy.stubtest pkg --allowlist allowlist.txt
 ```
 
 **Run stubtest after every change.** Also type-check code that imports your stubs to catch false positives.
-
-## typeshed Contribution
-
-Fork `python/typeshed`, add `stubs/pkg/METADATA.toml` + `.pyi` files, run `python scripts/stubtest_third_party.py pkg`, PR.
 
 ## Common Mistakes
 

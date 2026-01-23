@@ -1,21 +1,4 @@
----
-name: typechecking
-description: Use when fixing type errors, adding type annotations, or encountering basedpyright/pyright errors like "cannot be assigned to", "has no attribute", "missing type annotation", or invariant container issues
----
-
-# Python Type Checking
-
-## The Rule
-
-**Fix the code, never suppress the error.**
-
-Forbidden:
-- `# type: ignore`
-- `typing.Any` (except for genuinely dynamic data)
-- `typing.cast()` to silence errors
-- `@no_type_check`
-
-The error exists because the code has a problem. Fix the problem.
+# Python Type Checking Reference
 
 ## Quick Reference
 
@@ -138,27 +121,3 @@ class Response(TypedDict):
     data: dict[str, object]
     error: NotRequired[str]  # Optional key
 ```
-
-## Red Flags - STOP
-
-If thinking any of these, you're about to violate proper typing:
-
-- "I'll just add `# type: ignore`"
-- "Let me use `Any` to keep it simple"
-- "The type checker is wrong here"
-- "This works at runtime, so cast it"
-- "TypeVar is too complicated"
-- "I'll fix the types later"
-
-**All mean:** Find the proper type construct. The fix exists.
-
-## Rationalization Table
-
-| Excuse | Reality |
-|--------|---------|
-| "Just make it pass" | Suppression hides bugs. Fix the actual issue. |
-| "`Any` keeps it simple" | `Any` = no checking. Use `TypeVar` (2 lines). |
-| "Type checker is wrong" | It found a real issue. Invariance matters. |
-| "Works at runtime" | Types help readers and catch future bugs. |
-| "Time pressure" | Proper fix takes same time as suppression. |
-| "Will always be X" | "Always" assumptions break. Types enforce them. |

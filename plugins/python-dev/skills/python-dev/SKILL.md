@@ -41,37 +41,16 @@ After setup, verify: `pixi run -q -e dev test --help`
 
 **Use pixi tasks exclusively. Never bypass them with raw tool commands.**
 
-Projects define `pixi run test`, `pixi run typecheck`, `pixi run ruff-lint` etc. for a reason: they parse output to show ONE error at a time with concise, actionable information.
-
-## Why This Matters
-
-The concise output IS the information you need:
-- Test failures: test name, file:line, error message
-- Type errors: file:line, error type, context
-- Lint errors: file:line, rule code, message
-
-You do NOT need verbose output. The error message + file location is sufficient to understand and fix the issue.
-
 ## Commands
 
-| Task | Command | Optional Args | Never Do |
-|------|---------|---------------|----------|
-| Run tests | `pixi run -q -e dev test` | `test_pattern` | `pytest ...` directly |
-| Type check | `pixi run -q -e dev typecheck` | `file_path` | `basedpyright ...` directly |
-| Lint | `pixi run -q -e dev lint` | `file_path`, `--src`, `--tests` | `ruff ...` directly |
-| Format | `pixi run -q -e dev ruff-format` | `file_path`, `--src`, `--tests` | `ruff format ...` directly |
-| Lint all | `pixi run -q -e dev lint` | — | Running lint commands separately |
+| Task | Command | Optional Args |
+|------|---------|---------------|
+| Run tests | `pixi run -q -e dev test` | `test_pattern` |
+| Type check | `pixi run -q -e dev typecheck` | `file_path` |
+| Lint | `pixi run -q -e dev lint` | `file_path`, `--src`, `--tests` |
+| Format | `pixi run -q -e dev ruff-format` | `file_path`, `--src`, `--tests` |
 
-Examples:
-```bash
-pixi run -q -e dev test                     # Run all tests
-pixi run -q -e dev test test_auth           # Run tests matching pattern
-pixi run -q -e dev typecheck src/api.py     # Type check single file
-pixi run -q -e dev lint --src          # Lint only src/ code
-pixi run -q -e dev lint src/api.py     # Lint single file
-```
-
-**Never use `--verbose` or `-v` flags** even on pixi tasks. The concise output is intentional.
+**Never use `--verbose` or `-v` flags.** The concise output is intentional.
 
 ## Workflow
 
@@ -80,9 +59,11 @@ pixi run -q -e dev lint src/api.py     # Lint single file
 ```dot
 digraph workflow {
     rankdir=TB;
-    "1. Typecheck" -> "All type errors resolved?" [label="run"];
-    "All type errors resolved?" -> "1. Typecheck" [label="no - fix & re-run"];
-    "All type errors resolved?" -> "2. Tests" [label="yes"];
+    "1. Typecheck" -> "Type errors?" [label="run"];
+    "Type errors?" -> "Read typechecking.md" [label="yes"];
+    "Read typechecking.md" -> "Fix errors" [label="apply patterns"];
+    "Fix errors" -> "1. Typecheck" [label="re-run"];
+    "Type errors?" -> "2. Tests" [label="no"];
     "2. Tests" -> "All tests pass?" [label="run"];
     "All tests pass?" -> "2. Tests" [label="no - fix & re-run"];
     "All tests pass?" -> "3. Lint & Format" [label="yes"];
@@ -96,37 +77,51 @@ digraph workflow {
 ```
 
 ### Phase 1: Type Checking
+
 1. Run `pixi run -q -e dev typecheck`
-2. If type errors exist, **STOP and invoke the `typechecking` skill** (use Skill tool) before attempting fixes
-3. Fix all type errors before proceeding
-   - For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
+2. If type errors exist, read @references/typechecking.md for patterns to fix them
+3. For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
 4. Re-run until clean
 
 ### Phase 2: Tests
+
 1. Run `pixi run -q -e dev test`
 2. Fix all test failures before proceeding
 3. Re-run until all tests pass
 
 ### Phase 3: Linting & Formatting
+
 1. Run `pixi run -q -e dev lint`
 2. Fix all lint and format errors
 3. Re-run until clean
 
 ### Phase 4: Final Verification
+
 After completing all phases, run all checks together to catch regressions:
 
 ```bash
 pixi run -q -e dev typecheck && pixi run -q -e dev test && pixi run -q -e dev lint
 ```
 
-**If any check fails, restart from Phase 1.** Fixes in later phases can introduce errors in earlier ones (e.g., lint fixes may break types, test fixes may break both).
+**If any check fails, restart from Phase 1.**
 
 ### Per-Error Loop
+
 For each error within a phase:
 1. Read the concise output (file:line + message)
 2. Read the source file at that location
 3. Fix the issue
 4. Re-run the task to verify
+
+## Common Type Error Fixes
+
+| Error | Fix |
+|-------|-----|
+| `list[X] not assignable to list[X\|Y]` | Use `Sequence[X\|Y]` (covariant) instead of `list` |
+| `"T \| None" has no attribute` | Add null guard: `if x is None: raise/return` |
+| Missing type annotation | Add annotation; use `TypeVar` for generics |
+
+For more patterns (Protocols, TypedDict, overloads, generics), see @references/typechecking.md
 
 ## The Iron Rule: Fix the Code, Not the Tools
 
@@ -136,8 +131,7 @@ Forbidden actions:
 - Adding `# type: ignore` or `# noqa` comments
 - Adding rules to `pyproject.toml` or config files to disable checks
 - Modifying `.ruff.toml`, `pyrightconfig.json`, or similar configs
-- Using `@typing.no_type_check` or similar decorators to suppress errors
-- Changing tool settings to be more permissive
+- Using `@typing.no_type_check` or similar decorators
 
 **The error exists because the code has a problem. Fix the problem.**
 
@@ -147,110 +141,36 @@ If you're thinking any of these, you're about to violate the workflow:
 
 - "I'll add a type: ignore comment for now"
 - "Let me disable this rule in the config"
-- "This lint rule is too strict, I'll exclude it"
 - "The type checker is wrong, I'll suppress it"
 - "I need verbose output to understand this"
-- "Let me run pytest/basedpyright/ruff directly for more info"
-- "I'll use --verbose/-v to see all errors"
-- "I need to see the full test output"
-- "Let me run all checks at once to see everything"
-
-**All of these mean: Trust the tools. Fix the actual code. Re-run.**
-
-## Rationalization Table
-
-| Excuse | Reality |
-|--------|---------|
-| "This type error is a false positive" | It's not. The type checker found a real issue. Fix the code. |
-| "The lint rule is too strict here" | The rule exists for good reason. Write code that satisfies it. |
-| "I'll add an ignore and fix it later" | No. Fix it now. Ignores accumulate and never get fixed. |
-| "Changing config is faster" | Suppression is technical debt. The real fix takes the same time. |
-| "The type system can't express this" | It almost certainly can. Find the right types/annotations. |
-| "Need verbose for more context" | File:line + message IS context. Read the file. |
-| "Want to see all errors at once" | Fix one at a time. Errors cascade - fixing one may resolve others. |
-| "Direct tool gives more control" | Pixi tasks ARE the defined interface. They exist for a reason. |
-| "Test output was too brief" | Brief = efficient. You have file + line + assertion message. |
-| "Type checker summary incomplete" | You have file:line + error. Read the code there. |
-| "The task has a --verbose flag" | Yes, for human debugging. You don't need it. Trust concise output. |
-| "Error message is vague" | Read the source file. The code context clarifies the error. |
-
-## What the Concise Output Provides
-
-**Test failure:**
-```
-test_name (tests/file.py:45) - AssertionError: Expected X but got Y
-```
-You have: test name, exact file, exact line, the assertion that failed.
-
-**Type error:**
-```
-/path/file.py:15:10 - error: Type "str" cannot be assigned to type "int"
-```
-You have: exact file, exact line, exact column, exactly what's wrong.
-
-**Lint error:**
-```
-file.py:
-  10:5: E501 Line too long
-```
-You have: file, line, column, rule code, description.
-
-## The Concise Output Is Enough
-
-Do NOT request verbose output. The information provided is sufficient:
-- You know WHERE the error is (file + line)
-- You know WHAT the error is (message)
-- Read the source code at that location to understand WHY
-
-## When an Error Seems Impossible to Fix
-
-If you're stuck, these are valid approaches:
-
-1. **Read more context** - Read the file, surrounding code, imports, base classes
-2. **Understand the type** - Read type definitions, protocols, or base classes
-3. **Refactor the code** - Sometimes the code structure causes the error; restructure it
-4. **Create type stubs** - If a library lacks type hints, create stubs (see below)
-5. **Ask the user** - If genuinely uncertain, ask for guidance
-
-These are NOT valid approaches:
-- ❌ Adding ignore comments
-- ❌ Modifying tool configurations
-- ❌ Disabling checks
-- ❌ Loosening type strictness
+- "Let me run pytest/basedpyright/ruff directly"
 
 ## Missing Type Stubs
 
-When type errors occur because a library has no type hints (e.g., `reportMissingTypeStubs`):
+When you see `reportMissingTypeStubs` errors:
 
 ### Step 1: Search for Existing Stub Packages
 
-Spawn a sub-agent to search for existing stub packages. Common naming conventions:
+Common naming conventions:
 - `types-<package>` (typeshed convention, e.g., `types-requests`)
 - `<package>-stubs` (alternative convention, e.g., `matplotlib-stubs`)
 
-```
-Use Task tool with subagent_type="cc-ext:web-search-researcher" to search:
-"<package>-stubs OR types-<package> PyPI conda-forge type stubs"
-```
+Search PyPI or conda-forge for existing stubs.
 
 ### Step 2: Install if Found
-
-If a stub package exists on PyPI or conda-forge, add it to `pixi.toml`:
 
 ```bash
 pixi add -q -e dev types-<package>   # or <package>-stubs
 ```
 
-Then re-run typecheck to verify the stubs resolve the error.
+Re-run typecheck to verify.
 
 ### Step 3: Create Custom Stubs if Not Found
 
-If no stub package exists, create custom stubs in `src/stubs/`.
-
-**REQUIRED:** Use the `python-stubs` skill for creating stubs. It covers:
+If no stub package exists, create custom stubs. Read @references/python-stubs.md for:
 - Stub generation with `stubgen`
 - Verification with `stubtest`
-- Correct stub syntax (`Incomplete` not `Any`, etc.)
+- Correct stub syntax (`Incomplete` not `Any`)
 - Directory setup for pyright/mypy
 
 This is a valid fix—you're adding types, not suppressing errors.
