@@ -97,6 +97,13 @@
       "version": "1.0.0",
       "source": "./plugins/python-dev",
       "category": "development"
+    },
+    {
+      "name": "find-plugins",
+      "description": "Session hook that shows how to discover and locate available plugins from marketplaces",
+      "version": "1.0.0",
+      "source": "./plugins/find-plugins",
+      "category": "productivity"
     }
   ]
 }

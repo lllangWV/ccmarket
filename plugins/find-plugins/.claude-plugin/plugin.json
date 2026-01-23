@@ -1,0 +1,10 @@
+{
+  "name": "find-plugins",
+  "version": "1.0.0",
+  "description": "Session hook that shows how to discover and locate available plugins from marketplaces",
+  "author": {
+    "name": "lllangWV"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket/tree/main/plugins/find-plugins",
+  "license": "MIT"
+}
