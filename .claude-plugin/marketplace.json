@@ -15,46 +15,11 @@
       "category": "productivity"
     },
     {
-      "name": "office",
-      "description": "Microsoft Office document handling - create, edit, and analyze Word (docx), Excel (xlsx), and PowerPoint (pptx) files",
-      "version": "1.0.0",
-      "source": "./plugins/office",
-      "category": "productivity"
-    },
-    {
-      "name": "pdf",
-      "description": "PDF processing toolkit - extract text/tables, create PDFs, merge/split documents, and fill forms",
-      "version": "1.0.0",
-      "source": "./plugins/pdf",
-      "category": "productivity"
-    },
-    {
       "name": "mineru",
       "description": "Parse PDFs into Markdown and structured outputs using MinerU - extract tables, images, and equations",
       "version": "1.0.0",
       "source": "./plugins/mineru",
       "category": "productivity"
-    },
-    {
-      "name": "design",
-      "description": "Visual design toolkit - canvas art, algorithmic art, frontend design, TUI design, themes, brand guidelines, and GIF creation",
-      "version": "1.0.0",
-      "source": "./plugins/design",
-      "category": "design"
-    },
-    {
-      "name": "web",
-      "description": "Web development tools - build React/Tailwind artifacts and test web applications with Playwright",
-      "version": "1.0.0",
-      "source": "./plugins/web",
-      "category": "development"
-    },
-    {
-      "name": "dev-tools",
-      "description": "Developer tools - skill creation, Python testing, and MCP server building",
-      "version": "1.0.0",
-      "source": "./plugins/dev-tools",
-      "category": "development"
     },
     {
       "name": "pixi",
@@ -76,13 +41,6 @@
       "version": "1.0.0",
       "source": "./plugins/cadquery",
       "category": "engineering"
-    },
-    {
-      "name": "comms",
-      "description": "Communication and documentation - co-authoring workflows and internal communications templates",
-      "version": "1.0.0",
-      "source": "./plugins/comms",
-      "category": "productivity"
     },
     {
       "name": "coding-agent",
@@ -134,17 +92,10 @@
       "category": "writing"
     },
     {
-      "name": "brainstorming",
-      "description": "Turn ideas into fully formed designs through collaborative dialogue before implementation",
-      "version": "0.1.0",
-      "source": "./plugins/brainstorming",
-      "category": "productivity"
-    },
-    {
-      "name": "skill-authoring",
-      "description": "TDD-based approach to creating and testing Claude Code skills",
-      "version": "0.1.0",
-      "source": "./plugins/skill-authoring",
+      "name": "python-dev",
+      "description": "Python development workflow - enforces pixi tasks for tests, type checking, and linting",
+      "version": "1.0.0",
+      "source": "./plugins/python-dev",
       "category": "development"
     }
   ]
