@@ -97,10 +97,10 @@ digraph workflow {
 
 ### Phase 1: Type Checking
 1. Run `pixi run -q -e dev typecheck`
-2. Fix all type errors before proceeding
-   - **REQUIRED:** Use the `typechecking` skill for resolving type errors (invariance, narrowing, generics, protocols, overloads)
+2. If type errors exist, **STOP and invoke the `typechecking` skill** (use Skill tool) before attempting fixes
+3. Fix all type errors before proceeding
    - For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
-3. Re-run until clean
+4. Re-run until clean
 
 ### Phase 2: Tests
 1. Run `pixi run -q -e dev test`
