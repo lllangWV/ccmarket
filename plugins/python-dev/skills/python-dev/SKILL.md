@@ -35,7 +35,7 @@ If tasks are missing, set up the project:
    - Add the feature definitions to the project's `pixi.toml`
    - Add the features to the appropriate environments
 
-After setup, verify: `pixi run test --help`
+After setup, verify: `pixi run -q -e dev test --help`
 
 ## The Rule
 
@@ -56,19 +56,19 @@ You do NOT need verbose output. The error message + file location is sufficient 
 
 | Task | Command | Optional Args | Never Do |
 |------|---------|---------------|----------|
-| Run tests | `pixi run test` | `test_pattern` | `pytest ...` directly |
-| Type check | `pixi run typecheck` | `file_path` | `basedpyright ...` directly |
-| Lint | `pixi run ruff-lint` | `file_path`, `--src`, `--tests` | `ruff ...` directly |
-| Format | `pixi run ruff-format` | `file_path`, `--src`, `--tests` | `ruff format ...` directly |
-| Lint all | `pixi run lint` | — | Running lint commands separately |
+| Run tests | `pixi run -q -e dev test` | `test_pattern` | `pytest ...` directly |
+| Type check | `pixi run -q -e dev typecheck` | `file_path` | `basedpyright ...` directly |
+| Lint | `pixi run -q -e dev ruff-lint` | `file_path`, `--src`, `--tests` | `ruff ...` directly |
+| Format | `pixi run -q -e dev ruff-format` | `file_path`, `--src`, `--tests` | `ruff format ...` directly |
+| Lint all | `pixi run -q -e dev lint` | — | Running lint commands separately |
 
 Examples:
 ```bash
-pixi run test                     # Run all tests
-pixi run test test_auth           # Run tests matching pattern
-pixi run typecheck src/api.py     # Type check single file
-pixi run ruff-lint --src          # Lint only src/ code
-pixi run ruff-lint src/api.py     # Lint single file
+pixi run -q -e dev test                     # Run all tests
+pixi run -q -e dev test test_auth           # Run tests matching pattern
+pixi run -q -e dev typecheck src/api.py     # Type check single file
+pixi run -q -e dev ruff-lint --src          # Lint only src/ code
+pixi run -q -e dev ruff-lint src/api.py     # Lint single file
 ```
 
 **Never use `--verbose` or `-v` flags** even on pixi tasks. The concise output is intentional.
