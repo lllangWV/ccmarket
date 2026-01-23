@@ -58,7 +58,7 @@ You do NOT need verbose output. The error message + file location is sufficient 
 |------|---------|---------------|----------|
 | Run tests | `pixi run -q -e dev test` | `test_pattern` | `pytest ...` directly |
 | Type check | `pixi run -q -e dev typecheck` | `file_path` | `basedpyright ...` directly |
-| Lint | `pixi run -q -e dev ruff-lint` | `file_path`, `--src`, `--tests` | `ruff ...` directly |
+| Lint | `pixi run -q -e dev lint` | `file_path`, `--src`, `--tests` | `ruff ...` directly |
 | Format | `pixi run -q -e dev ruff-format` | `file_path`, `--src`, `--tests` | `ruff format ...` directly |
 | Lint all | `pixi run -q -e dev lint` | — | Running lint commands separately |
 
@@ -67,29 +67,65 @@ Examples:
 pixi run -q -e dev test                     # Run all tests
 pixi run -q -e dev test test_auth           # Run tests matching pattern
 pixi run -q -e dev typecheck src/api.py     # Type check single file
-pixi run -q -e dev ruff-lint --src          # Lint only src/ code
-pixi run -q -e dev ruff-lint src/api.py     # Lint single file
+pixi run -q -e dev lint --src          # Lint only src/ code
+pixi run -q -e dev lint src/api.py     # Lint single file
 ```
 
 **Never use `--verbose` or `-v` flags** even on pixi tasks. The concise output is intentional.
 
 ## Workflow
 
+**Execute checks in this order. Complete each phase before moving to the next.**
+
 ```dot
 digraph workflow {
-    "Error reported" -> "Run pixi task";
-    "Run pixi task" -> "Read concise output";
-    "Read concise output" -> "Read the file at line number";
-    "Read the file at line number" -> "Fix the issue";
-    "Fix the issue" -> "Run pixi task again";
+    rankdir=TB;
+    "1. Typecheck" -> "All type errors resolved?" [label="run"];
+    "All type errors resolved?" -> "1. Typecheck" [label="no - fix & re-run"];
+    "All type errors resolved?" -> "2. Tests" [label="yes"];
+    "2. Tests" -> "All tests pass?" [label="run"];
+    "All tests pass?" -> "2. Tests" [label="no - fix & re-run"];
+    "All tests pass?" -> "3. Lint & Format" [label="yes"];
+    "3. Lint & Format" -> "All errors resolved?" [label="run"];
+    "All errors resolved?" -> "3. Lint & Format" [label="no - fix & re-run"];
+    "All errors resolved?" -> "4. Final Verification" [label="yes"];
+    "4. Final Verification" -> "All checks pass?" [label="run all"];
+    "All checks pass?" -> "1. Typecheck" [label="no - restart"];
+    "All checks pass?" -> "Done" [label="yes"];
 }
 ```
 
-1. Run the appropriate pixi task
-2. Read the concise error output (file:line + message)
-3. Read the source file at that location
-4. Fix the issue
-5. Re-run the task to verify
+### Phase 1: Type Checking
+1. Run `pixi run -q -e dev typecheck`
+2. Fix all type errors before proceeding
+   - For missing stub errors (`reportMissingTypeStubs`), see [Missing Type Stubs](#missing-type-stubs)
+3. Re-run until clean
+
+### Phase 2: Tests
+1. Run `pixi run -q -e dev test`
+2. Fix all test failures before proceeding
+3. Re-run until all tests pass
+
+### Phase 3: Linting & Formatting
+1. Run `pixi run -q -e dev lint`
+2. Fix all lint and format errors
+3. Re-run until clean
+
+### Phase 4: Final Verification
+After completing all phases, run all checks together to catch regressions:
+
+```bash
+pixi run -q -e dev typecheck && pixi run -q -e dev test && pixi run -q -e dev lint
+```
+
+**If any check fails, restart from Phase 1.** Fixes in later phases can introduce errors in earlier ones (e.g., lint fixes may break types, test fixes may break both).
+
+### Per-Error Loop
+For each error within a phase:
+1. Read the concise output (file:line + message)
+2. Read the source file at that location
+3. Fix the issue
+4. Re-run the task to verify
 
 ## The Iron Rule: Fix the Code, Not the Tools
 
@@ -183,10 +219,32 @@ These are NOT valid approaches:
 
 ## Missing Type Stubs
 
-When type errors occur because a library has no type hints:
+When type errors occur because a library has no type hints (e.g., `reportMissingTypeStubs`):
 
-1. **First check** if stubs exist: look for `types-<package>` on PyPI or in typeshed
-2. **If no stubs exist**, create them in `src/stubs/`
+### Step 1: Search for Existing Stub Packages
+
+Spawn a sub-agent to search for existing stub packages. Common naming conventions:
+- `types-<package>` (typeshed convention, e.g., `types-requests`)
+- `<package>-stubs` (alternative convention, e.g., `matplotlib-stubs`)
+
+```
+Use Task tool with subagent_type="cc-ext:web-search-researcher" to search:
+"<package>-stubs OR types-<package> PyPI conda-forge type stubs"
+```
+
+### Step 2: Install if Found
+
+If a stub package exists on PyPI or conda-forge, add it to `pixi.toml`:
+
+```bash
+pixi add -q -e dev types-<package>   # or <package>-stubs
+```
+
+Then re-run typecheck to verify the stubs resolve the error.
+
+### Step 3: Create Custom Stubs if Not Found
+
+If no stub package exists, create custom stubs in `src/stubs/`.
 
 **REQUIRED:** Use the `python-stubs` skill for creating stubs. It covers:
 - Stub generation with `stubgen`
