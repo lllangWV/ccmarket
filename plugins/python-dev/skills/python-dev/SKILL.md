@@ -172,10 +172,26 @@ If you're stuck, these are valid approaches:
 1. **Read more context** - Read the file, surrounding code, imports, base classes
 2. **Understand the type** - Read type definitions, protocols, or base classes
 3. **Refactor the code** - Sometimes the code structure causes the error; restructure it
-4. **Ask the user** - If genuinely uncertain, ask for guidance
+4. **Create type stubs** - If a library lacks type hints, create stubs (see below)
+5. **Ask the user** - If genuinely uncertain, ask for guidance
 
 These are NOT valid approaches:
 - ❌ Adding ignore comments
 - ❌ Modifying tool configurations
 - ❌ Disabling checks
 - ❌ Loosening type strictness
+
+## Missing Type Stubs
+
+When type errors occur because a library has no type hints:
+
+1. **First check** if stubs exist: look for `types-<package>` on PyPI or in typeshed
+2. **If no stubs exist**, create them in `src/stubs/`
+
+**REQUIRED:** Use the `python-stubs` skill for creating stubs. It covers:
+- Stub generation with `stubgen`
+- Verification with `stubtest`
+- Correct stub syntax (`Incomplete` not `Any`, etc.)
+- Directory setup for pyright/mypy
+
+This is a valid fix—you're adding types, not suppressing errors.
