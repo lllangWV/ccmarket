@@ -42,3 +42,10 @@ thoughts/
 .pixi/*
 !.pixi/config.toml
 pixi.lock
+*tmp.md
+
+*.pixi
+*.pixi.lock
+
+.claude/
+ext_pkgs/

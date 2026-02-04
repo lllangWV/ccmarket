@@ -1,0 +1,10 @@
+{
+  "name": "python-dev",
+  "version": "1.0.0",
+  "description": "Python development workflow skill - enforces pixi tasks for tests, type checking, and linting",
+  "author": {
+    "name": "lllangWV"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket/tree/main/plugins/python-dev",
+  "license": "MIT"
+}

@@ -1,0 +1,19 @@
+{
+    "include": ["src/**/*.py", "tests/**/*.py"],
+    "ignore": [
+      "**/*.ipynb",
+      "**/docs_hooks.py",
+      "docs/",
+      "sphinx/",
+      "examples/",
+      ".github/",
+      "**/_version.py",
+      ".claude/",
+      ".pixi/"
+    ],
+    "stubPath": "src/stubs",
+    "pythonPlatform": "All",
+    "pythonVersion": "3.13",
+    "typeCheckingMode": "strict"
+  }
+  

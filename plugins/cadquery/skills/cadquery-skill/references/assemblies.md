@@ -1,38 +1,33 @@
-# CadQuery Assemblies Reference
+# CadQuery Assemblies
 
-Assemblies combine multiple parts with positioning and constraints.
+Combine multiple parts with positioning and constraints.
 
 ## Basic Assembly
 
 ```python
 import cadquery as cq
 
-# Create parts
 part1 = cq.Workplane().box(10, 10, 5)
 part2 = cq.Workplane().cylinder(10, 3)
 
-# Build assembly with locations
 assy = (
     cq.Assembly()
     .add(part1, name="base", color=cq.Color("gray"))
-    .add(part2, name="cylinder", 
+    .add(part2, name="cylinder",
          loc=cq.Location((0, 0, 7.5)),
          color=cq.Color("red"))
 )
 
-# Export
 assy.save("assembly.step")
 ```
 
 ## Location
 
-Position parts with `cq.Location`:
-
 ```python
 # Translation only
 loc = cq.Location((x, y, z))
 
-# Rotation (axis, angle in degrees)
+# Rotation (axis, angle degrees)
 loc = cq.Location((0, 0, 0), (0, 0, 1), 45)
 
 # Combined
@@ -44,15 +39,13 @@ loc = cq.Location(cq.Vector(x, y, z), cq.Vector(0, 0, 1), angle)
 ```python
 cq.Color("red")
 cq.Color("blue")
-cq.Color(0, 0, 1, 0.5)  # RGBA (0-1), alpha for transparency
+cq.Color("gray")
+cq.Color(0, 0, 1, 0.5)  # RGBA (0-1)
 ```
 
-## Constraint-Based Assembly
-
-Use constraints instead of explicit positions:
+## Constraint-Based
 
 ```python
-# Create parts with tags for constraint anchors
 part1 = (cq.Workplane().box(20, 20, 5)
          .faces(">Z").tag("top"))
 
@@ -71,17 +64,15 @@ assy = (
 ## Constraint Types
 
 ### Point
-Two points coincide or have specified distance:
 ```python
 .constrain("part1@vertices@>Z", "part2@vertices@<Z", "Point")
 .constrain("part1", "part2", "Point", param=5.0)  # 5mm offset
 ```
 
 ### Axis
-Align directions (param=180° for opposite, 0° for same):
 ```python
 .constrain("part1@faces@>Z", "part2@faces@<Z", "Axis")
-.constrain("part1@faces@>Z", "part2@faces@>Z", "Axis", param=0)
+.constrain("p1@faces@>Z", "p2@faces@>Z", "Axis", param=0)  # Same dir
 ```
 
 ### Plane
@@ -91,19 +82,16 @@ Combines Point and Axis (faces touch):
 ```
 
 ### PointInPlane
-Point lies within a plane:
 ```python
 .constrain("part1@vertices@>Z", "part2@faces@>Y", "PointInPlane")
 ```
 
 ### PointOnLine
-Point lies on a line:
 ```python
 .constrain("sphere", "box@edges@>Z", "PointOnLine")
 ```
 
-### Fixed Constraints
-Lock position/rotation:
+### Fixed
 ```python
 .constrain("base", "Fixed")
 .constrain("part", "FixedPoint", (0, 0, 0))
@@ -113,15 +101,14 @@ Lock position/rotation:
 
 ## Constraint Syntax
 
-Reference parts and geometry:
 ```python
-"partName@faces@>Z"      # Top face of part
-"partName@edges@|Z"      # Vertical edges
-"partName@vertices@<XY"  # Lower-left vertex
-"partName?tagName"       # Tagged geometry
+"partName@faces@>Z"       # Top face
+"partName@edges@|Z"       # Vertical edges
+"partName@vertices@<XY"   # Lower-left vertex
+"partName?tagName"        # Tagged geometry
 ```
 
-## Complete Assembly Example
+## Example
 
 ```python
 import cadquery as cq
@@ -138,7 +125,6 @@ def make_post():
 base = make_base()
 post = make_post()
 
-# Tag faces for constraints
 base.faces(">Z").tag("top")
 post.faces("<Z").tag("bottom")
 
@@ -147,26 +133,19 @@ assy = (
     .add(base, name="base", color=cq.Color("gray"))
     .add(post, name="post1", color=cq.Color("red"))
     .add(post, name="post2", color=cq.Color("red"))
-    .add(post, name="post3", color=cq.Color("red"))
-    .add(post, name="post4", color=cq.Color("red"))
-    # Position posts at corners
     .constrain("base?top", "post1?bottom", "Plane")
     .constrain("base@vertices@>X and >Y", "post1", "Point")
     .constrain("base?top", "post2?bottom", "Plane")
     .constrain("base@vertices@<X and >Y", "post2", "Point")
-    .constrain("base?top", "post3?bottom", "Plane")
-    .constrain("base@vertices@<X and <Y", "post3", "Point")
-    .constrain("base?top", "post4?bottom", "Plane")
-    .constrain("base@vertices@>X and <Y", "post4", "Point")
     .solve()
 )
 
 assy.save("posts.step")
 ```
 
-## Export Formats
+## Export
 
 ```python
-assy.save("output.step")  # STEP format
-assy.save("output.xml")   # OCCT XML format
+assy.save("output.step")
+assy.save("output.xml")  # OCCT XML
 ```
