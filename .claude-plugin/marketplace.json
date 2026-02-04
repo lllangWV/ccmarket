@@ -106,11 +106,11 @@
       "category": "productivity"
     },
     {
-      "name": "tauri-driver-cli",
+      "name": "tauri-test-cli",
       "description": "Visual testing CLI for Tauri apps - screenshots, DOM snapshots, click/type interactions, and UI verification",
       "source": {
         "source": "github",
-        "repo": "lllangWV/tauri-driver-cli"
+        "repo": "lllangWV/tauri-test-cli"
       },
       "category": "development"
     }
