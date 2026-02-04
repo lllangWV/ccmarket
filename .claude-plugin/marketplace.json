@@ -146,6 +146,12 @@
       "version": "0.1.0",
       "source": "./plugins/skill-authoring",
       "category": "development"
+    },
+    {
+      "name": "tauri-driver-cli",
+      "description": "Visual testing CLI for Tauri apps - screenshots, DOM snapshots, click/type interactions, and UI verification",
+      "source": "git@github.com:lllangWV/tauri-driver-cli.git",
+      "category": "development"
     }
   ]
 }
