@@ -28,7 +28,7 @@ cp -r .claude/* ~/.claude/
 
 ## What's Included
 
-### Skills (25)
+### Skills (26)
 
 Skills provide specialized knowledge that Claude applies automatically based on context.
 
@@ -51,6 +51,7 @@ Skills provide specialized knowledge that Claude applies automatically based on 
 | `mineru` | Parse PDFs with MinerU |
 | `pdf` | PDF manipulation and form filling |
 | `pixi-skill` | Package management with Pixi |
+| `pixi-skills` | Author skill-forge conda packages for agent skills |
 | `pptx` | PowerPoint presentation creation |
 | `skill-creator` | Guide for creating new skills |
 | `slack-gif-creator` | Create animated GIFs for Slack |
