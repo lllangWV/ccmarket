@@ -113,6 +113,13 @@
         "repo": "lllangWV/tauri-test-cli"
       },
       "category": "development"
+    },
+    {
+      "name": "pixi-skills",
+      "description": "Author skill-forge conda packages for agent skills - recipe.yaml, SKILL.md, version pinning, and skill-forge conventions",
+      "version": "1.0.0",
+      "source": "./plugins/pixi-skills",
+      "category": "development"
     }
   ]
 }
