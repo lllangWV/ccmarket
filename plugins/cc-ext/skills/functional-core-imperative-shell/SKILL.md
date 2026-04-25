@@ -1,6 +1,6 @@
 ---
 name: functional-core-imperative-shell
-description: Use when designing systems for testability, refactoring tangled code mixing business logic with IO, or asked about architectural patterns that separate pure computation from side effects. Also use when hearing "hard to test", "too many mocks", "boundaries talk", or "Gary Bernhardt".
+description: Use when designing, architecting, or structuring any code - this is the default architectural pattern. Also use when refactoring, improving testability, asked about code organization, or creating new modules/classes/services. Triggers on "how should I structure", "architecture", "design", "organize code", "hard to test", "boundaries talk", "Gary Bernhardt".
 ---
 
 # Functional Core, Imperative Shell
