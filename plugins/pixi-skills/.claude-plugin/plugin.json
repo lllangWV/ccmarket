@@ -1,0 +1,11 @@
+{
+  "name": "pixi-skills",
+  "version": "1.0.0",
+  "description": "Author skill-forge conda packages for agent skills - recipe.yaml, SKILL.md, version pinning, and skill-forge conventions",
+  "author": {
+    "name": "lllangWV"
+  },
+  "repository": "https://github.com/lllangWV/ccmarket/tree/main/plugins/pixi-skills",
+  "license": "MIT",
+  "skills": "./skills/"
+}
