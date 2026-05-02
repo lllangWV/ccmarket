@@ -11,6 +11,167 @@ description: Use when designing, architecting, or structuring any code - this is
 
 This pattern comes from Gary Bernhardt's "Boundaries" talk. The key insight: **the value is the boundary**—not method calls, not interfaces, but simple immutable data flowing between components.
 
+## CRITICAL: Domain Decomposition First
+
+**STOP. Before applying this pattern, decompose the problem domain into logical units.**
+
+The pattern is NOT about creating `_core.py`, `_shell.py`, `_types.py` files. It's about separating decisions from dependencies **at each level of abstraction**.
+
+```dot
+digraph decomposition {
+    rankdir=TB;
+    "Problem Domain" [shape=box];
+    "Logical Unit A" [shape=box];
+    "Logical Unit B" [shape=box];
+    "Logical Unit C" [shape=box];
+    "Composed Shell" [shape=box, style=filled, fillcolor=lightgray];
+    
+    "Problem Domain" -> "Logical Unit A";
+    "Problem Domain" -> "Logical Unit B";
+    "Problem Domain" -> "Logical Unit C";
+    "Logical Unit A" -> "Composed Shell";
+    "Logical Unit B" -> "Composed Shell";
+    "Logical Unit C" -> "Composed Shell";
+    
+    subgraph cluster_unit {
+        label="Each Logical Unit";
+        "FC" [label="Functional Core", shape=ellipse];
+        "IS" [label="Imperative Shell", shape=ellipse];
+        "Types" [label="Types (colocated)", shape=ellipse];
+        "FC" -> "IS" [label="values"];
+    }
+}
+```
+
+### Think Like This
+
+1. **What are the distinct sub-problems?** Each gets its own module.
+2. **What decisions does each sub-problem make?** That's its functional core.
+3. **What IO/dependencies does each need?** That's its imperative shell.
+4. **How do they compose?** A higher-level shell orchestrates them.
+
+### Example: Dimension Point Detection
+
+Bad decomposition (too literal):
+```
+dimension_points/
+├── _types.py      # ALL types dumped here
+├── _core.py       # ALL logic dumped here
+└── _shell.py      # ONE shell for everything
+```
+
+Good decomposition (logical units):
+```
+dimension_points/
+├── primitive_line_matching/      # Sub-problem 1: Which line belongs to which text?
+│   ├── __init__.py               # Exports: match_primitives_to_text()
+│   ├── matching.py               # FC + IS + types for this concern
+│   └── strategies/               # Different strategies for matching
+│       ├── proximity.py
+│       └── raycast.py
+├── candidate_intersection/       # Sub-problem 2: Where are candidate points?
+│   ├── __init__.py
+│   └── intersection.py           # FC + IS + types for this concern
+├── endpoint_refinement/          # Sub-problem 3: Refine line endpoints
+│   ├── __init__.py
+│   └── refinement.py
+├── text_extraction/              # Sub-problem 4: Extract numbers from dimension text
+│   ├── __init__.py
+│   └── extraction.py
+├── ratio_calculation/            # Sub-problem 5: Calculate pixel-to-unit ratio
+│   ├── __init__.py
+│   └── ratio.py
+├── convergence/                  # Sub-problem 6: Self-consistent refinement loop
+│   ├── __init__.py
+│   └── convergence.py
+└── detector.py                   # Top-level shell: orchestrates all sub-modules
+```
+
+Each module contains its OWN types, core, and shell—colocated for the **principle of locality**.
+
+### The Principle of Locality
+
+**Define types where they're used, not in a central types file.**
+
+```python
+# BAD: Central types file far from usage
+# _types.py
+@dataclass(frozen=True)
+class PrimitiveLineMatch: ...
+
+@dataclass(frozen=True)  
+class CandidateIntersection: ...
+
+@dataclass(frozen=True)
+class RefinedEndpoint: ...
+# ... 20 more types ...
+
+# matching.py imports from far away
+from ._types import PrimitiveLineMatch
+```
+
+```python
+# GOOD: Types colocated with their functional core
+# primitive_line_matching/matching.py
+
+# === TYPES ===
+@dataclass(frozen=True)
+class PrimitiveLineMatch:
+    """Result of matching a primitive line to dimension text."""
+    line: PrimitiveLine
+    text_box: TextBox
+    confidence: float
+
+# === FUNCTIONAL CORE ===
+def find_closest_line(
+    lines: tuple[PrimitiveLine, ...],
+    text: TextBox,
+) -> PrimitiveLineMatch | None:
+    ...
+
+# === IMPERATIVE SHELL ===
+class PrimitiveLineMatcher:
+    def match(self, image: Image) -> tuple[PrimitiveLineMatch, ...]:
+        ...
+```
+
+This keeps related concepts together and makes the code easier to understand and maintain.
+
+### Hierarchical Composition
+
+Shells can wrap other shells. Each level of abstraction has its own FC/IS boundary:
+
+```python
+# Top-level shell orchestrates sub-module shells
+class DimensionPointDetector:
+    """Composed shell: orchestrates specialized modules."""
+    
+    def __init__(
+        self,
+        line_matcher: PrimitiveLineMatcher,       # Sub-module shell
+        intersection_finder: IntersectionFinder,  # Sub-module shell
+        endpoint_refiner: EndpointRefiner,        # Sub-module shell
+        text_extractor: TextExtractor,            # Sub-module shell
+        ratio_calculator: RatioCalculator,        # Sub-module shell
+    ):
+        self._line_matcher = line_matcher
+        self._intersection_finder = intersection_finder
+        self._endpoint_refiner = endpoint_refiner
+        self._text_extractor = text_extractor
+        self._ratio_calculator = ratio_calculator
+    
+    def detect(self, image: Image) -> DimensionResult:
+        # Orchestrate sub-modules (no business logic here!)
+        matches = self._line_matcher.match(image)
+        candidates = self._intersection_finder.find(matches)
+        refined = self._endpoint_refiner.refine(matches, candidates)
+        texts = self._text_extractor.extract(matches)
+        ratio = self._ratio_calculator.calculate(refined, texts)
+        
+        # Convergence loop (this could also be delegated to convergence module)
+        return self._converge(refined, texts, ratio)
+```
+
 ## When to Use
 
 ```dot
@@ -282,7 +443,9 @@ async def process():
 
 ## Composability
 
-Functional cores compose into larger functional cores:
+### Functional Cores Compose
+
+Small pure functions compose into larger pure functions:
 
 ```python
 # Small functional cores
@@ -304,24 +467,129 @@ class DocumentProcessor:
         self.db.save(result)                       # IO
 ```
 
-## File Organization
+### Shells Compose Hierarchically
 
-Mark sections explicitly in each file:
+When sub-problems each have their own shell (because they have IO), a higher-level shell orchestrates them:
 
 ```python
-# === DATA PRIMITIVES ===
+# Each sub-problem has its own FC/IS boundary
+class LineDetector:
+    """Shell for line detection (wraps FC + does image IO)."""
+    def detect(self, image: Image) -> tuple[Line, ...]: ...
+
+class TextExtractor:
+    """Shell for OCR (wraps FC + calls OCR service)."""
+    def extract(self, image: Image, regions: tuple[Region, ...]) -> tuple[Text, ...]: ...
+
+class RatioCalculator:
+    """Shell for ratio calculation (pure FC, but wrapped for consistency)."""
+    def calculate(self, lines: tuple[Line, ...], texts: tuple[Text, ...]) -> Ratio: ...
+
+# Higher-level shell composes the sub-shells
+class DimensionAnalyzer:
+    """Composed shell: orchestrates sub-module shells."""
+    
+    def __init__(
+        self,
+        line_detector: LineDetector,
+        text_extractor: TextExtractor,
+        ratio_calculator: RatioCalculator,
+    ):
+        self._line_detector = line_detector
+        self._text_extractor = text_extractor
+        self._ratio_calculator = ratio_calculator
+    
+    def analyze(self, image_path: Path) -> AnalysisResult:
+        image = Image.open(image_path)  # IO at top level
+        
+        # Orchestrate sub-shells (no business logic here!)
+        lines = self._line_detector.detect(image)
+        regions = derive_text_regions(lines)  # Pure helper
+        texts = self._text_extractor.extract(image, regions)
+        ratio = self._ratio_calculator.calculate(lines, texts)
+        
+        return AnalysisResult(lines=lines, texts=texts, ratio=ratio)
+```
+
+This creates a **hierarchy of FC/IS boundaries**:
+- Each leaf module: types + FC + shell
+- Higher modules: shell that orchestrates child shells
+- Top-level: entry point that wires everything together
+
+## File Organization
+
+### DON'T: Literal File Structure
+
+```python
+# AVOID THIS ANTI-PATTERN:
+mymodule/
+├── _types.py      # All types far from usage
+├── _core.py       # Monolithic core with unrelated functions
+└── _shell.py      # One shell trying to do everything
+```
+
+This creates:
+- **Scattered context**: Types defined far from where they're used
+- **God modules**: `_core.py` becomes a dumping ground
+- **Rigid structure**: Forces unrelated concerns together
+
+### DO: Logical Modules with Colocated FC/IS
+
+```python
+# PREFER THIS:
+mymodule/
+├── user_expiration/          # Logical concern: who's expired?
+│   └── expiration.py         # Types + core + shell together
+├── notification/             # Logical concern: how to notify?
+│   └── notifier.py           # Types + core + shell together
+└── sweeper.py                # Top-level shell: orchestrates sub-modules
+```
+
+### Within Each File: Section Markers
+
+Mark sections explicitly to make the pattern visible:
+
+```python
+# user_expiration/expiration.py
+
+# === TYPES ===
 @dataclass(frozen=True)
 class User: ...
 
+@dataclass(frozen=True)
+class ExpirationResult: ...
+
 # === FUNCTIONAL CORE ===
-def find_expired_users(users, now): ...
-def calculate_notification_priority(user): ...
+def find_expired_users(users: tuple[User, ...], now: datetime) -> tuple[User, ...]:
+    """Pure: identify expired users."""
+    ...
+
+def calculate_notification_priority(user: User) -> int:
+    """Pure: prioritize notifications."""
+    ...
 
 # === IMPERATIVE SHELL ===
-class UserNotifierActor:  # "Actor" suffix signals shell component
-    def __init__(self, db: DatabaseProtocol, mailer: MailerProtocol): ...
-    def process(self, input: UserBatch) -> NotificationResult: ...
+class UserExpirationChecker:
+    """Shell: loads users from DB, applies core logic."""
+    
+    def __init__(self, db: DatabaseProtocol):
+        self._db = db
+    
+    def check(self) -> ExpirationResult:
+        users = self._db.get_users()  # IO
+        expired = find_expired_users(tuple(users), datetime.now())  # Core
+        return ExpirationResult(expired=expired)
 ```
+
+### When to Split vs. Keep Together
+
+| Scenario | Approach |
+|----------|----------|
+| < 200 lines, single concern | One file with sections |
+| 200-500 lines, 2-3 related concerns | One file, consider splitting |
+| > 500 lines or 3+ concerns | Split into logical modules |
+| Strategies/variations of same concern | `strategies/` subdirectory |
+| Shared types used across many modules | `shared_types.py` at package root |
 
 ## Protocols for Dependency Injection
 
@@ -523,12 +791,29 @@ The orchestrator has **zero business logic**—it just wires actors together. Ea
 
 | Mistake | Fix |
 |---------|-----|
+| **Literal file structure** (`_core.py`, `_shell.py`, `_types.py`) | Decompose by logical concern first, then apply FC/IS within each |
+| **All types in one file** | Colocate types with the core functions that use them |
+| **One monolithic core** | Each logical sub-problem gets its own FC/IS boundary |
+| **Skipping domain decomposition** | FIRST ask "what are the distinct sub-problems?" |
 | Conditionals in shell | Move ALL `if` statements to core functions |
 | Calling `datetime.now()` in core | Inject time as parameter |
 | Mutable data classes | Use `frozen=True` |
 | Testing shell with unit tests | Use integration tests for shell |
 | Giant functional core | Break into small composable functions |
 | IO inside "pure" functions | Extract IO to shell, pass values in |
+
+### The Decomposition Checklist
+
+Before writing any code, answer these questions:
+
+1. **What are the distinct sub-problems?** List them.
+2. **For each sub-problem:**
+   - What decisions/logic does it contain? → Functional core
+   - What IO/dependencies does it need? → Imperative shell
+   - What data types does it work with? → Colocate in same module
+3. **How do sub-problems compose?** → Higher-level orchestrating shell
+4. **Are there strategy variations?** → `strategies/` subdirectory
+5. **What's shared across all sub-problems?** → Package-level `shared_types.py`
 
 ## Quick Reference
 
